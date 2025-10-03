@@ -9,10 +9,24 @@ def main():
 
     args = parser.parse_args()
 
+    # STX (ASCII 2) y ETX (ASCII 3)
+    stx = chr(2)
+    etx = chr(3)
+
+    mensaje = f"{stx}{args.command}{etx}\r\n"
+
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.connect((args.ip, args.port))
-    sock.send(args.command.encode())
-    sock.close()
+
+    try:
+        sock.connect((args.ip, args.port))
+        sock.send(mensaje.encode())
+        print(f"[OK] Comando enviado a {args.ip}:{args.port} -> <STX>{args.command}<ETX>")
+    except Exception as e:
+        print(f"[ERROR] No se pudo enviar: {e}")
+    finally:
+        sock.close()
+
+    input("Presione Enter para salir...")
 
 if __name__ == "__main__":
     main()
